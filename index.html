@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Player</title>
+    <link href="https://fonts.googleapis.com/css2?family=Linux+Libertine:wght@400&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Linux Libertine', serif; /* Set Linux Libertine as the font */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            background-color: #333; /* Set background color to #333 */
+            color: white; /* Change text color to white for better contrast */
+        }
+
+        .video-player {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1); /* Light background for video player */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            width: 75%;
+            height: 75%;
+        }
+
+        video {
+            width: 75%;
+            border-radius: 10px; /* Rounded corners for the video */
+        }
+
+        .controls {
+            margin: 10px 0;
+        }
+
+        button {
+            margin: 0 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #333; /* Button color set to #333 */
+            color: white; /* Text color set to white */
+            font-size: 16px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background-color: #555; /* Darker shade for hover effect */
+            transform: scale(1.05); /* Slight zoom effect on hover */
+        }
+
+        .highlight {
+            background-color: rgba(255, 255, 255, 0.2); /* Light background for highlighted track */
+            color: #fff; /* Keep text color white for contrast */
+        }
+
+        #tracklist {
+            list-style: none;
+            padding: 0;
+            text-align: left; /* Aligns tracklist to the left */
+        }
+
+        #tracklist li {
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            width: 100%;
+            transition: background-color 0.3s;
+            text-align: left; /* Ensures text within list items is left-aligned */
+        }
+
+        #tracklist li:hover {
+            background-color: rgba(255, 255, 255, 0.2); /* Slight background on hover */
+        }
+    </style>
+</head>
+<body><br/><br/><br/><br/><br/>
+    <div class="video-player">
+        <video id="video" controls autoplay>
+            <source id="video-source" src="video1.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="controls">
+            <button id="prev">⏮️</button> <!-- Previous symbol -->
+            <button id="play">▶️</button> <!-- Play symbol -->
+            <button id="pause">⏸️</button> <!-- Pause symbol -->
+            <button id="next">⏭️</button> <!-- Next symbol -->
+        </div>
+        <ul id="tracklist">
+            <li data-video="video1.mp4">Video 1</li>
+            <li data-video="video2.mp4">Video 2</li>
+            <li data-video="video3.mp4">Video 3</li>
+        </ul>
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const videoSource = document.getElementById('video-source');
+        const playButton = document.getElementById('play');
+        const pauseButton = document.getElementById('pause');
+        const nextButton = document.getElementById('next');
+        const prevButton = document.getElementById('prev');
+        const tracklist = document.getElementById('tracklist');
+
+        const videos = [
+            'video1.mp4',
+            'video2.mp4',
+            'video3.mp4'
+        ];
+
+        let currentVideoIndex = 0;
+
+        // Autoplay the first video on page load
+        window.onload = () => {
+            loadVideo(currentVideoIndex); // Load the first video
+        };
+
+        // Play button
+        playButton.addEventListener('click', () => {
+            video.play();
+        });
+
+        // Pause button
+        pauseButton.addEventListener('click', () => {
+            video.pause();
+        });
+
+        // Next button
+        nextButton.addEventListener('click', () => {
+            currentVideoIndex = (currentVideoIndex + 1) % videos.length;
+            loadVideo(currentVideoIndex);
+        });
+
+        // Previous button
+        prevButton.addEventListener('click', () => {
+            currentVideoIndex = (currentVideoIndex - 1 + videos.length) % videos.length;
+            loadVideo(currentVideoIndex);
+        });
+
+        // Load video function
+        function loadVideo(index) {
+            videoSource.src = videos[index];
+            video.load();
+            video.play();
+            highlightCurrentTrack(); // Highlight the current track
+        }
+
+        // Event listener for video end
+        video.addEventListener('ended', () => {
+            currentVideoIndex = (currentVideoIndex + 1) % videos.length;
+            loadVideo(currentVideoIndex);
+        });
+
+        // Tracklist click event
+        tracklist.addEventListener('click', (event) => {
+            if (event.target.tagName === 'LI') {
+                currentVideoIndex = Array.from(tracklist.children).indexOf(event.target);
+                loadVideo(currentVideoIndex);
+            }
+        });
+
+        // Function to highlight the current track
+        function highlightCurrentTrack() {
+            const trackItems = tracklist.children;
+            
+            // Remove highlight from all tracks
+            Array.from(trackItems).forEach((item, index) => {
+                item.classList.remove('highlight');
+                if (index === currentVideoIndex) {
+                    item.classList.add('highlight'); // Add highlight to current track
+                }
+            });
+        }
+    </script>
+</body>
+</html>
